@@ -1,0 +1,24 @@
+version: '3.4'
+
+volumes:
+  postgres_data:
+
+services:
+  mvcs.grpc:
+    container_name: mvcs.grpc
+    image: ${DOCKER_REGISTRY-}mvcs.grpc
+    build:
+      context: .
+      dockerfile: MVCS.Presentation.gRPC/Dockerfile
+  mvcs.postgres:
+    container_name: mvcs.postgres
+    image: postgres
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=MySecretPa$$w0rd
+      - POSTGRES_DB=MVCS
+    ports:
+      - "5432:5432"
+    
