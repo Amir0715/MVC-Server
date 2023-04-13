@@ -5,5 +5,4 @@ namespace MVCS.Infrastructure.Persistence.EfCore;
 
 public class ApplicationDBContext : DbContext, IApplicationDBContext 
 {
-    
 }

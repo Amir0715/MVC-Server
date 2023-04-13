@@ -3,16 +3,24 @@
 option csharp_namespace = "MVCS.Presentation.gRPC";
 
 package auth;
+import "google/protobuf/empty.proto";
 
 service Auth {
 	rpc Login(LoginRequest) returns (TokenResponse);
 	rpc Registration(RegistrationRequest) returns (TokenResponse);
+	rpc RegistrationWithKey(RegistrationWithKeyRequest) returns (google.protobuf.Empty);
+	rpc Me(google.protobuf.Empty) returns (MeMessage);
 }
 
 message RegistrationRequest {
 	string username = 1;
 	string email = 2;
 	string password = 3;
+}
+
+message RegistrationWithKeyRequest {
+	string username = 1;
+	string key = 2;
 }
 
 message LoginRequest {
@@ -22,4 +30,8 @@ message LoginRequest {
 
 message TokenResponse {
 	string authToken = 1;
+}
+
+message MeMessage {
+	string username = 1;
 }
