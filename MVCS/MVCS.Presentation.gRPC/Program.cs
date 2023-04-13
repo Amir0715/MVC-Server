@@ -5,8 +5,8 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using MVCS.Core.Domain.Interfaces;
 using MVCS.Infrastructure.Identity;
-using MVCS.Infrastructure.Identity.Jwt;
-using MVCS.Infrastructure.Identity.MultiTenants;
+using MVCS.Infrastructure.Identity.Services.Jwt;
+using MVCS.Infrastructure.MultiTenants;
 using MVCS.Presentation.gRPC.AuthenticationSchemeHandlers;
 using MVCS.Presentation.gRPC.OptionsSetup;
 using MVCS.Presentation.gRPC.Services;
@@ -21,7 +21,7 @@ builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
 // Добавляем контекст для идентити
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(configure => { })
-    .AddEntityFrameworkStores<ApplicationIdentityDBContext>()
+    .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimsService>();
@@ -78,7 +78,7 @@ app.MapGet("/", () => "Communication with gRPC endpoints must be made through a 
 // TODO: Временное решение применение миграций
 using (var scope = app.Services.CreateScope())
 {
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationIdentityDBContext>();
+    var db = scope.ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>();
     var pendingMigrations = db.Database.GetPendingMigrations();
     if (pendingMigrations.Any())
     {

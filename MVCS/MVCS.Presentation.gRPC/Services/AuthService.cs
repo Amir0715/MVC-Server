@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using MVCS.Core.Domain.Interfaces;
 using MVCS.Infrastructure.Identity;
+using MVCS.Infrastructure.Identity.Services;
 
 namespace MVCS.Presentation.gRPC.Services;
 

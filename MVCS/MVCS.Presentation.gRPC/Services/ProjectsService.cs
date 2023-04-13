@@ -1,16 +1,16 @@
 ﻿using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using MVCS.Infrastructure.Identity;
-using MVCS.Infrastructure.Identity.MultiTenants;
+using MVCS.Infrastructure.MultiTenants;
 
 namespace MVCS.Presentation.gRPC.Services;
 
 [Authorize]
 public class ProjectsService : Projects.ProjectsBase
 {
-    private readonly ApplicationIdentityDBContext _dbContext;
+    private readonly ApplicationIdentityDbContext _dbContext;
 
-    public ProjectsService(ApplicationIdentityDBContext dbContext)
+    public ProjectsService(ApplicationIdentityDbContext dbContext)
     {
         _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
     }

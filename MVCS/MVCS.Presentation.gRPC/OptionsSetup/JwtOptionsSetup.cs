@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Options;
-using MVCS.Infrastructure.Identity.Jwt;
+using MVCS.Infrastructure.Identity.Services.Jwt;
 
 namespace MVCS.Presentation.gRPC.OptionsSetup;
 

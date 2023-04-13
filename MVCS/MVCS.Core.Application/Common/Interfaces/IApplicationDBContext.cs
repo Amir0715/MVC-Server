@@ -1,6 +1,6 @@
 ﻿namespace MVCS.Core.Application.Common.Interfaces;
 
-public interface IApplicationDBContext
+public interface IApplicationDbContext
 {
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

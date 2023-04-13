@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 using MVCS.Infrastructure.Identity;
+using MVCS.Infrastructure.Identity.Services;
 
 namespace MVCS.Presentation.gRPC.AuthenticationSchemeHandlers;
 
@@ -17,7 +18,7 @@ public class UserKeyAuthenticationSchemeOption : AuthenticationSchemeOptions
 
 public class UserKeyAuthenticationSchemeHandler : AuthenticationHandler<UserKeyAuthenticationSchemeOption>
 {
-    private readonly ApplicationIdentityDBContext _identityDbContext;
+    private readonly ApplicationIdentityDbContext _identityDbContext;
     private readonly KeyHasher _keyHasher;
     private readonly PasswordHasher<ApplicationUser> _passwordHasher;
 
@@ -26,7 +27,7 @@ public class UserKeyAuthenticationSchemeHandler : AuthenticationHandler<UserKeyA
         ILoggerFactory logger, 
         UrlEncoder encoder, 
         ISystemClock clock,
-        ApplicationIdentityDBContext identityDbContext,
+        ApplicationIdentityDbContext identityDbContext,
         KeyHasher keyHasher) : base(options, logger, encoder, clock)
     {
         _identityDbContext = identityDbContext ?? throw new ArgumentNullException(nameof(identityDbContext));
