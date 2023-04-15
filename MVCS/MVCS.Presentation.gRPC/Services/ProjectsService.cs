@@ -2,11 +2,9 @@
 using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.EntityFrameworkCore;
 using MVCS.Core.Application.Common.Interfaces;
 using MVCS.Core.Domain.Entities;
 using MVCS.Infrastructure.Identity;
-using MVCS.Infrastructure.MultiTenants;
 
 namespace MVCS.Presentation.gRPC.Services;
 
@@ -29,21 +27,15 @@ public class ProjectsService : Projects.ProjectsBase
 
     public override async Task<CreateResponse> Create(CreateRequest request, ServerCallContext context)
     {
-        var project = new ProjectTenant
+        var applicationUser = await _userManager.GetUserAsync(context.GetHttpContext().User);
+        var project = new ProjectTenant(request.Name)
         {
-            Id = Guid.NewGuid().ToString(),
-            Name = request.Name, 
             ConnectionString = $"Host=mvcs.postgres;Port=5432;Database={request.Name};Username=postgres;Password=MySecretPa$w0rd"
         };
-        var successAdded = await _multiTenantStore.TryAddAsync(project);
-        if (successAdded)
+        applicationUser.AddProject(project);
+        var successAdded = await _userManager.UpdateAsync(applicationUser);
+        if (successAdded.Succeeded)
         {
-            var applicationUser = await _userManager.GetUserAsync(context.GetHttpContext().User);
-            applicationUser = await _userManager.Users.Include(x => x.Projects)
-                .FirstOrDefaultAsync(x => x.Id == applicationUser.Id);
-            applicationUser.AddProject(project);
-            
-            await _userManager.UpdateAsync(applicationUser);
             return new CreateResponse
             {
                 Name = project.Name, 

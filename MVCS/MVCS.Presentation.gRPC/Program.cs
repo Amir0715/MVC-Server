@@ -7,7 +7,6 @@ using Microsoft.IdentityModel.Tokens;
 using MVCS.Core.Domain.Interfaces;
 using MVCS.Infrastructure.Identity;
 using MVCS.Infrastructure.Identity.Services.Jwt;
-using MVCS.Infrastructure.MultiTenants;
 using MVCS.Infrastructure.Persistence;
 using MVCS.Presentation.gRPC.AuthenticationSchemeHandlers;
 using MVCS.Presentation.gRPC.OptionsSetup;
@@ -64,7 +63,7 @@ MVCS.Infrastructure.Identity.Dependencies.ConfigureServices(builder.Configuratio
 MVCS.Infrastructure.Persistence.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
 builder.Services.AddMultiTenant<ProjectTenant>()
-    .WithEFCoreStore<MultiTenantStoreDbContext, ProjectTenant>()
+    .WithStore<IdentityDbContext>(ServiceLifetime.Scoped)
     .WithHeaderStrategy("Tenant");
 
 var app = builder.Build();
@@ -74,22 +73,19 @@ var app = builder.Build();
 // TODO: Временное решение применение миграций
 using (var scope = app.Services.CreateScope())
 {
-    // Apply migrations if needed
-    var multiTenantStoreDbContext = scope.ServiceProvider.GetRequiredService<MultiTenantStoreDbContext>();
-    await multiTenantStoreDbContext.Database.MigrateAsync();
-
-    var store = scope.ServiceProvider.GetRequiredService<IMultiTenantStore<ProjectTenant>>();
-    foreach (var tenant in await store.GetAllAsync())
-    {
-        await using var applicationDbContext = new ApplicationDbContext(tenant);
-        await applicationDbContext.Database.MigrateAsync();
-    }
-
     var identityDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
     var pendingMigrations = identityDbContext.Database.GetPendingMigrations();
     if (pendingMigrations.Any())
     {
         await identityDbContext.Database.MigrateAsync();
+    }
+
+    // Apply migrations if needed
+    var store = scope.ServiceProvider.GetRequiredService<IMultiTenantStore<ProjectTenant>>();
+    foreach (var tenant in await store.GetAllAsync())
+    {
+        await using var applicationDbContext = new ApplicationDbContext(tenant);
+        await applicationDbContext.Database.MigrateAsync();
     }
 }
 
@@ -105,7 +101,6 @@ app.MapGrpcService<GreeterService>();
 app.MapGrpcService<AuthService>();
 app.MapGrpcService<ProjectsService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
-
 
 
 if (app.Environment.IsDevelopment())

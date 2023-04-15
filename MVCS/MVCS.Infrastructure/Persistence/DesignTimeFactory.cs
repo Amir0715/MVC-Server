@@ -1,7 +1,7 @@
 ﻿using Finbuckle.MultiTenant;
 using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.EntityFrameworkCore;
-using MVCS.Infrastructure.MultiTenants;
+using MVCS.Infrastructure.Identity;
 
 namespace MVCS.Infrastructure.Persistence;
 
