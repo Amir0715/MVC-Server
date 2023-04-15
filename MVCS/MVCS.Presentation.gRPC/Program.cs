@@ -1,4 +1,5 @@
 using System.Text;
+using Finbuckle.MultiTenant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -7,6 +8,7 @@ using MVCS.Core.Domain.Interfaces;
 using MVCS.Infrastructure.Identity;
 using MVCS.Infrastructure.Identity.Services.Jwt;
 using MVCS.Infrastructure.MultiTenants;
+using MVCS.Infrastructure.Persistence;
 using MVCS.Presentation.gRPC.AuthenticationSchemeHandlers;
 using MVCS.Presentation.gRPC.OptionsSetup;
 using MVCS.Presentation.gRPC.Services;
@@ -21,7 +23,7 @@ builder.Services.AddGrpc();
 builder.Services.AddGrpcReflection();
 // ƒобавл€ем контекст дл€ идентити
 builder.Services.AddIdentity<ApplicationUser, IdentityRole>(configure => { })
-    .AddEntityFrameworkStores<ApplicationIdentityDbContext>()
+    .AddEntityFrameworkStores<IdentityDbContext>()
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimsService>();
@@ -62,9 +64,37 @@ MVCS.Infrastructure.Identity.Dependencies.ConfigureServices(builder.Configuratio
 MVCS.Infrastructure.Persistence.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
 builder.Services.AddMultiTenant<ProjectTenant>()
+    .WithEFCoreStore<MultiTenantStoreDbContext, ProjectTenant>()
     .WithHeaderStrategy("Tenant");
 
 var app = builder.Build();
+
+
+
+// TODO: ¬ременное решение применение миграций
+using (var scope = app.Services.CreateScope())
+{
+    // Apply migrations if needed
+    var multiTenantStoreDbContext = scope.ServiceProvider.GetRequiredService<MultiTenantStoreDbContext>();
+    await multiTenantStoreDbContext.Database.MigrateAsync();
+
+    var store = scope.ServiceProvider.GetRequiredService<IMultiTenantStore<ProjectTenant>>();
+    foreach (var tenant in await store.GetAllAsync())
+    {
+        await using var applicationDbContext = new ApplicationDbContext(tenant);
+        await applicationDbContext.Database.MigrateAsync();
+    }
+
+    var identityDbContext = scope.ServiceProvider.GetRequiredService<IdentityDbContext>();
+    var pendingMigrations = identityDbContext.Database.GetPendingMigrations();
+    if (pendingMigrations.Any())
+    {
+        await identityDbContext.Database.MigrateAsync();
+    }
+}
+
+
+
 app.UseMultiTenant();
 app.UseRouting();
 app.UseAuthentication();
@@ -73,18 +103,10 @@ app.UseAuthorization();
 // Configure the HTTP request pipeline.
 app.MapGrpcService<GreeterService>();
 app.MapGrpcService<AuthService>();
+app.MapGrpcService<ProjectsService>();
 app.MapGet("/", () => "Communication with gRPC endpoints must be made through a gRPC client. To learn how to create a client, visit: https://go.microsoft.com/fwlink/?linkid=2086909");
 
-// TODO: ¬ременное решение применение миграций
-using (var scope = app.Services.CreateScope())
-{
-    var db = scope.ServiceProvider.GetRequiredService<ApplicationIdentityDbContext>();
-    var pendingMigrations = db.Database.GetPendingMigrations();
-    if (pendingMigrations.Any())
-    {
-        db.Database.Migrate();
-    }
-}
+
 
 if (app.Environment.IsDevelopment())
 {

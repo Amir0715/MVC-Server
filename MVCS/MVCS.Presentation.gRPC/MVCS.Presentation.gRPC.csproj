@@ -34,7 +34,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\MVCS.Infrastructure\MVCS.Infrastructure.csproj" />
+    <ProjectReference Include="..\MVCS.Infrastructure\MVCS.Infrastructure.csproj" />
     <ProjectReference Include="..\MVCS.Core.Application\MVCS.Core.Application.csproj" />
     <ProjectReference Include="..\MVCS.Core.Domain\MVCS.Core.Domain.csproj" />
   </ItemGroup>

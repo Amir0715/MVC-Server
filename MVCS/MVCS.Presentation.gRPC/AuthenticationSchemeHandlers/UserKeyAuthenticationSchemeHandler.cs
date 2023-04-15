@@ -1,6 +1,4 @@
 ﻿using System.Security.Claims;
-using System.Security.Cryptography;
-using System.Text;
 using System.Text.Encodings.Web;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Identity;
@@ -18,7 +16,7 @@ public class UserKeyAuthenticationSchemeOption : AuthenticationSchemeOptions
 
 public class UserKeyAuthenticationSchemeHandler : AuthenticationHandler<UserKeyAuthenticationSchemeOption>
 {
-    private readonly ApplicationIdentityDbContext _identityDbContext;
+    private readonly IdentityDbContext _identityDbContext;
     private readonly KeyHasher _keyHasher;
     private readonly PasswordHasher<ApplicationUser> _passwordHasher;
 
@@ -27,7 +25,7 @@ public class UserKeyAuthenticationSchemeHandler : AuthenticationHandler<UserKeyA
         ILoggerFactory logger, 
         UrlEncoder encoder, 
         ISystemClock clock,
-        ApplicationIdentityDbContext identityDbContext,
+        IdentityDbContext identityDbContext,
         KeyHasher keyHasher) : base(options, logger, encoder, clock)
     {
         _identityDbContext = identityDbContext ?? throw new ArgumentNullException(nameof(identityDbContext));

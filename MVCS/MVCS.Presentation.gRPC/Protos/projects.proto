@@ -7,6 +7,7 @@ import "google/protobuf/empty.proto";
 
 service Projects {
 	rpc Create(CreateRequest) returns(CreateResponse);
+	rpc CreatePost(CreatePostRequest) returns(CreatePostResponse);
 }
 
 message CreateRequest {
@@ -14,6 +15,15 @@ message CreateRequest {
 }
 
 message CreateResponse {
+	string identifier = 1;
+	string name = 2;
+}
+
+message CreatePostRequest {
+	string name = 1;
+}
+
+message CreatePostResponse {
 	int32 id = 1;
 	string name = 2;
 }

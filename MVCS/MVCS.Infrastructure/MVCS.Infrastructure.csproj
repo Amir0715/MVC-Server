@@ -1,0 +1,27 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <Folder Include="Identity\Migrations\" />
+    <Folder Include="Persistence\Configurations\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Finbuckle.MultiTenant" Version="6.10.0" />
+    <PackageReference Include="Finbuckle.MultiTenant.EntityFrameworkCore" Version="6.10.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="6.15.1" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="7.0.3" />
+    <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="6.15.1" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\MVCS.Core.Application\MVCS.Core.Application.csproj" />
+    <ProjectReference Include="..\MVCS.Core.Domain\MVCS.Core.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

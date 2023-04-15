@@ -15,7 +15,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "MVCS.Presentation.gRPC", "M
 EndProject
 Project("{E53339B2-1760-4266-BCC7-CA923CBCF16C}") = "docker-compose", "docker-compose.dcproj", "{925B34EA-4088-49DF-A63E-67B9FD0A69B3}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCS.Infrastructure", "..\MVCS.Infrastructure\MVCS.Infrastructure.csproj", "{CCDFF4CE-DF25-42EB-B758-4EC0C3D341E4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MVCS.Infrastructure", "MVCS.Infrastructure\MVCS.Infrastructure.csproj", "{CCDFF4CE-DF25-42EB-B758-4EC0C3D341E4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

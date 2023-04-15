@@ -1,5 +1,4 @@
 using Grpc.Core;
-using MVCS.Presentation.gRPC;
 
 namespace MVCS.Presentation.gRPC.Services
 {
