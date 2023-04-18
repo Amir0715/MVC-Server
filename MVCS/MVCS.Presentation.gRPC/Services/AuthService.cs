@@ -33,11 +33,10 @@ public class AuthService : Auth.AuthBase
     public override async Task<TokenResponse> Login(LoginRequest request, ServerCallContext context)
     {
         var user = await _userManager.FindByEmailAsync(request.Email);
+        var errorString = "Неправильная почта или пароль";
         if (user == null)
         {
-            // TODO: Нужно правильно отдавать ошибку
-            _logger.LogError("Пользователь с почтой {email} не найден", request.Email);
-            return null;
+            throw new RpcException(new Status(StatusCode.NotFound, errorString));
         }
 
         var result = await _signInManager.CheckPasswordSignInAsync(
@@ -46,11 +45,13 @@ public class AuthService : Auth.AuthBase
             true
         );
 
-
-        if (!result.Succeeded) return null;
+        if (!result.Succeeded)
+        {
+            throw new RpcException(new Status(StatusCode.NotFound, errorString));
+        }
 
         var token = await _tokenClaimsService.GetTokenAsync(request.Email);
-        return new TokenResponse()
+        return new TokenResponse
         {
             AuthToken = token
         };
@@ -67,17 +68,16 @@ public class AuthService : Auth.AuthBase
         var creationIdentityResult = await _userManager.CreateAsync(applicationUser, request.Password);
         if (!creationIdentityResult.Succeeded)
         {
-            // TODO: Нужно правильно отдавать ошибку
             foreach (var identityError in creationIdentityResult.Errors)
             {
                 _logger.LogError(identityError.Description);
             }
 
-            return null;
+            throw new RpcException(new Status(StatusCode.InvalidArgument, creationIdentityResult.ToString()));
         }
 
         var token = await _tokenClaimsService.GetTokenAsync(request.Email);
-        return new TokenResponse()
+        return new TokenResponse
         {
             AuthToken = token
         };
@@ -91,15 +91,15 @@ public class AuthService : Auth.AuthBase
             Key = _keyHasher.HashKey(request.Key),
         };
         var creationIdentityResult = await _userManager.CreateAsync(applicationUser);
+        
         if (!creationIdentityResult.Succeeded)
         {
-            // TODO: Нужно правильно отдавать ошибку
             foreach (var identityError in creationIdentityResult.Errors)
             {
                 _logger.LogError(identityError.Description);
             }
 
-            return null;
+            throw new RpcException(new Status(StatusCode.InvalidArgument, creationIdentityResult.ToString()));
         }
 
         return new Empty();

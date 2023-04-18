@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using MVCS.Core.Application.Common.Interfaces;
 using MVCS.Core.Domain.Entities;
 using MVCS.Infrastructure.Identity;
+using MVCS.Presentation.gRPC.AuthorizationHandlers;
 
 namespace MVCS.Presentation.gRPC.Services;
 
@@ -43,9 +44,10 @@ public class ProjectsService : Projects.ProjectsBase
             };
         }
 
-        return new CreateResponse();
+        throw new RpcException(new Status(StatusCode.InvalidArgument, successAdded.ToString()));
     }
 
+    [Authorize(Policy = Policies.ProjectPolicy)]
     public override async Task<CreatePostResponse> CreatePost(CreatePostRequest request, ServerCallContext context)
     {
         var post = new Post

@@ -9,6 +9,7 @@ using MVCS.Infrastructure.Identity;
 using MVCS.Infrastructure.Identity.Services.Jwt;
 using MVCS.Infrastructure.Persistence;
 using MVCS.Presentation.gRPC.AuthenticationSchemeHandlers;
+using MVCS.Presentation.gRPC.AuthorizationHandlers;
 using MVCS.Presentation.gRPC.OptionsSetup;
 using MVCS.Presentation.gRPC.Services;
 
@@ -26,6 +27,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(configure => { })
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimsService>();
+builder.Services.AddSingleton<IAuthorizationHandler, ProjectAuthorizationHandler>();
 builder.Services.AddHttpContextAccessor();
 
 // настриваем аунтефикацию
@@ -57,14 +59,17 @@ builder.Services.AddAuthorization(options =>
         .AddAuthenticationSchemes(userKeyAuthenticationScheme)
         .RequireAuthenticatedUser()
         .Build();
+
+    options.AddPolicy(Policies.ProjectPolicy, policy => policy.AddRequirements(new ProjectRequirement()));
 });
+
 
 MVCS.Infrastructure.Identity.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 MVCS.Infrastructure.Persistence.Dependencies.ConfigureServices(builder.Configuration, builder.Services);
 
 builder.Services.AddMultiTenant<ProjectTenant>()
     .WithStore<IdentityDbContext>(ServiceLifetime.Scoped)
-    .WithHeaderStrategy("Tenant");
+    .WithHeaderStrategy("ProjectId");
 
 var app = builder.Build();
 
