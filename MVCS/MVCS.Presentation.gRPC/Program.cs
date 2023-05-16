@@ -27,7 +27,7 @@ builder.Services.AddIdentity<ApplicationUser, IdentityRole>(configure => { })
     .AddDefaultTokenProviders();
 
 builder.Services.AddScoped<ITokenClaimsService, IdentityTokenClaimsService>();
-builder.Services.AddSingleton<IAuthorizationHandler, ProjectAuthorizationHandler>();
+builder.Services.AddScoped<IAuthorizationHandler, ProjectAuthorizationHandler>();
 builder.Services.AddHttpContextAccessor();
 
 // настриваем аунтефикацию

@@ -6,24 +6,67 @@ package projects;
 import "google/protobuf/empty.proto";
 
 service Projects {
-	rpc Create(CreateRequest) returns(CreateResponse);
-	rpc CreatePost(CreatePostRequest) returns(CreatePostResponse);
+	rpc Create(CreateRequest) returns(Project);
+	rpc UploadFile(UploadFileRequest) returns(UploadFileResponse);
+	rpc UploadFiles(UploadFilesRequest) returns(UploadFilesResponse);
+	rpc GetFileVersions(GetFileVersionRequest) returns(FileResponse);
+	rpc Find(FindRequest) returns(Project);
 }
 
 message CreateRequest {
 	string name = 1;
 }
 
-message CreateResponse {
+message FindRequest {
+	string name = 1;
+}
+
+message Project {
 	string identifier = 1;
 	string name = 2;
 }
 
-message CreatePostRequest {
-	string name = 1;
+message UploadFilesRequest {
+	int32 branchId = 1;
+	repeated FileRequest files = 2;
 }
 
-message CreatePostResponse {
+message UploadFileRequest {
+	int32 branchId = 1;
+	FileRequest file = 2;
+}
+
+message FileRequest {
+	string filePath = 1;
+	string hash = 2;
+	bytes content = 3;
+}
+
+message UploadFilesResponse {
+	int32 branchId = 1;
+	repeated FileResponse files = 2;
+}
+
+message UploadFileResponse {
+	int32 branchId = 1;
+	FileResponse file = 2;
+}
+
+message FileResponse {
 	int32 id = 1;
-	string name = 2;
+	string filePath = 2;
+	repeated FileVersionResponse Versions = 3;
+}
+
+message FileVersionResponse {
+	int32 id = 1;
+	string hash = 2;
+}
+
+message GetFileVersionRequest {
+	int32 branchId = 1;
+	oneof file_oneof {
+		int32 id = 2;
+		string filePath = 3;
+	}
 }

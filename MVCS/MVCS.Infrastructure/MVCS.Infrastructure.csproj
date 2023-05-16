@@ -10,6 +10,7 @@
     <Folder Include="Identity\Migrations\" />
     <Folder Include="Identity\Configurations\" />
     <Folder Include="Persistence\Configurations\" />
+    <Folder Include="Persistence\Migrations\" />
   </ItemGroup>
 
   <ItemGroup>

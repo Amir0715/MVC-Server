@@ -5,6 +5,6 @@ namespace MVCS.Core.Application.Common.Interfaces;
 
 public interface IApplicationDbContext
 {
-    public DbSet<Post> Posts { get; }
+    public DbSet<Branch> Branches { get; set; }
     Task<int> SaveChangesAsync(CancellationToken cancellationToken);
 }

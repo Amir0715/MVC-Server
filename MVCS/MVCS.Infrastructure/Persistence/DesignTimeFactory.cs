@@ -13,6 +13,6 @@ public class DesignTimeFactory : IDesignTimeDbContextFactory<ApplicationDbContex
         var tenantInfo = new ProjectTenant { ConnectionString = "Data Source=Data/Shared.db" };
         var optionsBuilder = new DbContextOptionsBuilder<ApplicationDbContext>();
 
-        return new ApplicationDbContext(tenantInfo, optionsBuilder.Options);
+        return new ApplicationDbContext(tenantInfo, optionsBuilder.Options, true);
     }
 }

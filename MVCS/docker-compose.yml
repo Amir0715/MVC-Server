@@ -2,7 +2,7 @@ version: '3.4'
 
 volumes:
   postgres_data:
-
+    
 services:
   mvcs.grpc:
     container_name: mvcs.grpc
