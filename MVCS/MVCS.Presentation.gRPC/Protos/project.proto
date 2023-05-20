@@ -1,0 +1,14 @@
+syntax = "proto3";
+
+option csharp_namespace = "MVCS.Presentation.gRPC";
+
+package project;
+import "google/protobuf/empty.proto";
+import "Protos/messages.proto";
+
+
+service Project {
+	rpc UploadFile(messages.UploadFileRequest) returns(messages.UploadFileResponse);
+	rpc UploadFiles(messages.UploadFilesRequest) returns(messages.UploadFilesResponse);
+	rpc GetFileVersions(messages.GetFileVersionRequest) returns(messages.FileResponse);
+}
