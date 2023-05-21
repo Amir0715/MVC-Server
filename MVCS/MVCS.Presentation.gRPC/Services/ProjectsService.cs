@@ -7,6 +7,7 @@ using MVCS.Core.Domain.Entities;
 using MVCS.Infrastructure.Identity;
 using MVCS.Infrastructure.Persistence;
 using MVCS.Presentation.gRPC.Messages;
+using Branch = MVCS.Core.Domain.Entities.Branch;
 
 namespace MVCS.Presentation.gRPC.Services;
 

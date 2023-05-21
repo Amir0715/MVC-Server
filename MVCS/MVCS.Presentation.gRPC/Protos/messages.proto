@@ -65,3 +65,18 @@ message GetFileVersionRequest {
 		string filePath = 3;
 	}
 }
+
+message GetBranchesResponse {
+	repeated Branch branches = 1;
+}
+
+message Branch {
+	int32 id = 1;
+	string name = 2;
+	optional int32 parentBranchId = 3;
+}
+
+message CreateBranchRequest {
+	string name = 1;
+	optional int32 parentBranchId = 2;
+}

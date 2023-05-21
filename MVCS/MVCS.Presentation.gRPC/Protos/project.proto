@@ -8,6 +8,8 @@ import "Protos/messages.proto";
 
 
 service Project {
+	rpc CreateBranch(messages.CreateBranchRequest) returns(messages.Branch);
+	rpc GetAllBranches(google.protobuf.Empty) returns(messages.GetBranchesResponse);
 	rpc UploadFile(messages.UploadFileRequest) returns(messages.UploadFileResponse);
 	rpc UploadFiles(messages.UploadFilesRequest) returns(messages.UploadFilesResponse);
 	rpc GetFileVersions(messages.GetFileVersionRequest) returns(messages.FileResponse);

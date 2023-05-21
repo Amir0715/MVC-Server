@@ -1,4 +1,5 @@
-﻿using Grpc.Core;
+﻿using Google.Protobuf.WellKnownTypes;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.EntityFrameworkCore;
 using MVCS.Core.Application.Common.Interfaces;
@@ -15,6 +16,54 @@ public class ProjectService : Project.ProjectBase
     public ProjectService(IApplicationDbContext applicationDbContext)
     {
         _applicationDbContext = applicationDbContext ?? throw new ArgumentNullException(nameof(applicationDbContext));
+    }
+
+    [Authorize(Policy = Policies.ProjectPolicy)]
+    public override async Task<Branch> CreateBranch(CreateBranchRequest request, ServerCallContext context)
+    {
+        Core.Domain.Entities.Branch? parentBranch = null;
+        if (request.HasParentBranchId)
+        {
+            parentBranch = await _applicationDbContext.Branches.FindAsync(request.ParentBranchId);
+            if (parentBranch == null)
+            {
+                throw new RpcException(new Status(StatusCode.NotFound, $"Не найдена ветка с id {request.ParentBranchId}"));
+            }
+        }
+
+        var branch = new Core.Domain.Entities.Branch(request.Name, parentBranch);
+
+        await _applicationDbContext.Branches.AddAsync(branch, context.CancellationToken);
+        await _applicationDbContext.SaveChangesAsync(context.CancellationToken);
+
+        return new Branch()
+        {
+            Id = branch.Id,
+            Name = branch.Name,
+            ParentBranchId = branch.ParentBranchId.GetValueOrDefault()
+        };
+    }
+
+    [Authorize(Policy = Policies.ProjectPolicy)]
+    public override async Task<GetBranchesResponse> GetAllBranches(Empty request, ServerCallContext context)
+    {
+        var branches = await _applicationDbContext.Branches.AsNoTracking().ToListAsync();
+
+        var branchesResponse = new GetBranchesResponse();
+        var branchesForResponse = branches.Select(x =>
+        {
+            var branch = new Branch
+            {
+                Id = x.Id,
+                Name = x.Name
+            };
+            if (x.ParentBranchId.HasValue)
+                branch.ParentBranchId = x.ParentBranchId.Value;
+            return branch;
+        });
+        branchesResponse.Branches.Add(branchesForResponse);
+
+        return branchesResponse;
     }
 
     [Authorize(Policy = Policies.ProjectPolicy)]
