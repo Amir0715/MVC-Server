@@ -13,5 +13,5 @@ service Project {
 	rpc UploadFile(messages.UploadFileRequest) returns(messages.UploadFileResponse);
 	rpc UploadFiles(messages.UploadFilesRequest) returns(messages.UploadFilesResponse);
 	rpc GetFileVersions(messages.GetFileVersionRequest) returns(messages.FileResponse);
-	rpc rpc GetBranchFiles(messages.BranchRequest) returns(messages.FileListResponse);
+	rpc GetBranchFiles(messages.BranchRequest) returns(messages.FileListResponse);
 }
