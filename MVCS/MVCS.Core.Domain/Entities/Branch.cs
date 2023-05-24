@@ -6,7 +6,7 @@
 public class Branch : BaseEntity
 {
     public static readonly string DefaultName = "main";
-    public string Name { get; set; } = DefaultName;
+    public string Name { get; set; }
     
     public int? ParentBranchId { get; set; }
     public Branch? ParentBranch { get; set; }
@@ -23,6 +23,7 @@ public class Branch : BaseEntity
             throw new ArgumentException("Имя не может быть пустым", nameof(name));
 
         ParentBranch = parentBranch;
+        Name = name;
     }
 
     public void AddFile(File file)
