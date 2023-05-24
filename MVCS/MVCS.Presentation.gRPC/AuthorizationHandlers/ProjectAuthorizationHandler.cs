@@ -44,11 +44,9 @@ public class ProjectAuthorizationHandler : AuthorizationHandler<ProjectRequireme
 
     private async Task<bool> UserHasAccessToTenant(ClaimsPrincipal userPrincipal, string tenantId)
     {
-        var user = await _userManager.GetUserAsync(userPrincipal);
         var projectTenant = await _identityDbContext.ProjectTenants
             .AsNoTracking()
-            .FirstOrDefaultAsync(x => x.Identifier == tenantId && 
-                                      x.Users.Any(u => u.Id == user.Id));
+            .FirstOrDefaultAsync(x => x.Identifier == tenantId);
         return projectTenant != null;
     }
 }
