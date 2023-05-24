@@ -36,13 +36,6 @@ public class ApplicationDbContext : DbContext, IMultiTenantDbContext, IApplicati
     {
         base.OnModelCreating(modelBuilder);
         modelBuilder.ConfigureMultiTenant();
-
-        foreach (var entity in modelBuilder.Model.GetEntityTypes()
-                     .Where(e => typeof(BaseEntity).IsAssignableFrom(e.ClrType)))
-        {
-            modelBuilder.Entity(entity.Name).Property(nameof(BaseEntity.CreatedDateTime)).HasDefaultValueSql("select now() at time zone 'utc';");
-            modelBuilder.Entity(entity.Name).Property(nameof(BaseEntity.UpdatedDateTime)).HasDefaultValueSql("select now() at time zone 'utc';");
-        }
     }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
