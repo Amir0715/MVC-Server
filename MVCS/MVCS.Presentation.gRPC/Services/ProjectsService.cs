@@ -11,6 +11,7 @@ using Branch = MVCS.Core.Domain.Entities.Branch;
 
 namespace MVCS.Presentation.gRPC.Services;
 
+[Authorize]
 public class ProjectsService : Projects.ProjectsBase
 {
     private readonly UserManager<ApplicationUser> _userManager;
@@ -49,7 +50,6 @@ public class ProjectsService : Projects.ProjectsBase
         };
     }
 
-    [Authorize]
     public override async Task<Messages.Project> Find(FindRequest request, ServerCallContext context)
     {
         var projectName = request.Name;
@@ -66,7 +66,6 @@ public class ProjectsService : Projects.ProjectsBase
         };
     }
 
-    [Authorize]
     public override async Task<ProjectList> GetAll(Empty request, ServerCallContext context)
     {
         var projects = await _multiTenantStore.GetAllAsync();
