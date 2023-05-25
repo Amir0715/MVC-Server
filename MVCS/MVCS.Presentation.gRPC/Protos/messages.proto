@@ -80,3 +80,14 @@ message CreateBranchRequest {
 	string name = 1;
 	optional int32 parentBranchId = 2;
 }
+
+message BranchRequest {
+	oneof {
+		int32 branchId = 1;
+		string branchName = 2;
+	}	
+}
+
+message FileListResponse {
+	repeated FileResponse files = 1;
+}

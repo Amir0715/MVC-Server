@@ -203,4 +203,55 @@ public class ProjectService : Project.ProjectBase
         }));
         return fileResponse;
     }
+
+    [Authorize(Policy = Policies.ProjectPolicy)]
+    public override async Task<FileListResponse> GetBranchFiles(BranchRequest request, ServerCallContext context)
+    {
+        int branchId;
+        string branchName;
+
+        if (request.BranchCase == BranchRequest.BranchOneofCase.BranchId)
+        {
+            branchId = request.BranchId;
+        }
+        else if (request.BranchCase == BranchRequest.BranchOneofCase.BranchName)
+        {
+            branchName = request.BranchName;
+        }
+        else
+        {
+            // Неверный запрос, не указан идентификатор или название ветки
+            throw new RpcException(new Status(StatusCode.InvalidArgument, "BranchId or BranchName is required."));
+        }
+
+        // Получение списка файлов для указанной ветки (используйте branchId или branchName для получения файлов)
+
+        var fileList = new List<FileResponse>();
+
+        // Пример заполнения списка файлов
+        fileList.Add(new FileResponse
+        {
+            Id = 1,
+            FilePath = "path/to/file1",
+            Versions =
+            {
+                new FileVersionResponse { Id = 1, Hash = "hash1" },
+                new FileVersionResponse { Id = 2, Hash = "hash2" }
+            }
+        });
+
+        fileList.Add(new FileResponse
+        {
+            Id = 2,
+            FilePath = "path/to/file2",
+            Versions =
+            {
+                new FileVersionResponse { Id = 1, Hash = "hash3" },
+                new FileVersionResponse { Id = 2, Hash = "hash4" },
+                new FileVersionResponse { Id = 3, Hash = "hash5" }
+            }
+        });
+
+        return new FileListResponse { Files = { fileList } };
+    }
 }
